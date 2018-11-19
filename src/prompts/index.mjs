@@ -1,8 +1,59 @@
+// @flow
 import Enquirer from 'enquirer'
-
 const prompt = Enquirer.prompt
 
-export default async function prompts() {
+/*::
+type Choices = {
+  [command: string]: {
+    name: string,
+    value: string,
+    message: string,
+    command: string
+  }
+}
+*/
+
+export const activity = {
+  draw: {
+    name: 'draw',
+    value: 'draw',
+    message: 'Draw a picture',
+    command: 'echo "DRAW!"'
+  },
+  conf: {
+    name: 'conf',
+    value: 'conf',
+    message: 'Watch General Conference',
+    command: 'echo "CONF!"'
+  },
+  game: {
+    name: 'game',
+    value: 'game',
+    message: 'Play a game',
+    command: 'echo "GAME!"'
+  }
+}
+export const game = {
+  loom: {
+    name: 'loom',
+    message: 'Loom',
+    value: 'loom',
+    command: 'echo "LOOOM"'
+  },
+  hf: {
+    name: 'hf',
+    message: 'Hidden Folks',
+    value: 'hf',
+    command: 'echo "HIIIIDEN"'
+  },
+  rime: {
+    name: 'rime',
+    message: 'RiME',
+    value: 'rime',
+    command: 'echo "RIIIIME"'
+  }
+}
+export async function ask() {
   const standardPrompt = {
     type: 'confirm',
     name: 'standard',
@@ -27,58 +78,36 @@ Welcome, have you met the standard for access?
     }
   }
 
-  const activityChoices = [
-    {
-      name: 'draw',
-      value: 'draw',
-      message: 'Draw a picture'
-    },
-    {
-      name: 'conf',
-      value: 'conf',
-      message: 'Watch General Conference'
-    },
-    {
-      name: 'game',
-      value: 'game',
-      message: 'Play a game'
-    }
-  ]
   const activityMessage = `
 What activity do you want to do?
 
-${choiceList(activityChoices)}
+${choiceList(activity)}
   `
   const activityPrompt = {
     type: 'input',
     name: 'activity',
     message: activityMessage,
     async validate(input, _question) {
-      return validateInChoices(activityChoices, input)
+      return validateInChoices(activity, input)
     },
     async skip(state) {
       return !state.answers.standard
     }
   }
 
-  const gameChoices = [
-    { name: 'loom', message: 'Loom', value: 'loom' },
-    { name: 'hf', message: 'Hidden Folks', value: 'hf' },
-    { name: 'rime', message: 'RiME', value: 'rime' }
-  ]
   const gamePrompt = {
     type: 'input',
     name: 'game',
     message: `
 What game do you want to play?
 
-${choiceList(gameChoices)}
+${choiceList(game)}
 `,
     async skip(state) {
       return !state.answers.standard || state.answers.activity !== 'game'
     },
     async validate(input, _question) {
-      return validateInChoices(gameChoices, input)
+      return validateInChoices(game, input)
     }
   }
 
@@ -92,9 +121,10 @@ ${choiceList(gameChoices)}
   return outcome
 }
 
-function pad(arr, name, val) {
-  const maxLen = arr.reduce(
-    (max, el) => (el[name].length > max ? el[name].length : max),
+function pad(choices /*:::Choices*/, name /*:::string*/, val /*:::string*/) {
+  const maxLen = Object.keys(choices).reduce(
+    (max, key) =>
+      choices[key][name].length > max ? choices[key][name].length : max,
     Number.NEGATIVE_INFINITY
   )
   const diffLen = maxLen - val.length
@@ -104,12 +134,17 @@ function pad(arr, name, val) {
   return val + spaces
 }
 
-function choiceList(choices) {
-  return choices
-    .map((c, _, arr) => pad(arr, 'name', c.name) + ' - ' + c.message)
+function choiceList(choices /*:::Choices*/) {
+  return Object.keys(choices)
+    .map(
+      (k, _, arr) =>
+        pad(choices, 'name', choices[k].name) + ' - ' + choices[k].message
+    )
     .join('\n')
 }
 
-function validateInChoices(choices, input) {
-  return choices.map(c => c.name).some(n => n === input)
+function validateInChoices(choices /*:::Choices*/, input) {
+  return Object.keys(choices)
+    .map(k => choices[k].name)
+    .some(n => n === input)
 }

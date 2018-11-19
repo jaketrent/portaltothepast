@@ -2,14 +2,14 @@
 
 import shell from 'shelljs'
 
-import * as game from './game/index.mjs'
-
-import prompts from './prompts/index.mjs'
+import * as prompts from './prompts/index.mjs'
 ;(async function enter() {
-  const outcome = await prompts()
+  const outcome = await prompts.ask()
   console.log('outcome', outcome)
 
   if (outcome.activity === 'game') {
-    shell.exec(game.commands[outcome.game], { async: true })
+    shell.exec(prompts.game[outcome.game].command, { async: true })
+  } else {
+    shell.exec(prompts.activity[outcome.activity].command, { async: true })
   }
 })()
