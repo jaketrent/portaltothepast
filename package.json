@@ -1,0 +1,28 @@
+{
+  "name": "portaltothepast",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "enquirer": "^2.0.7",
+    "shelljs": "^0.8.3"
+  },
+  "engines": {
+    "node": "11.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node --experimental-modules src/index.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaketrent/portaltothepast.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaketrent/portaltothepast/issues"
+  },
+  "homepage": "https://github.com/jaketrent/portaltothepast#readme"
+}
